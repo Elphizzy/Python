@@ -1,0 +1,206 @@
+						--Section A
+						
+					  --profit analysis					
+/*1. Within the space of the last three years, what was the profit worth of the breweries,
+inclusive of the anglophone and the francophone territories?*/
+
+select countries, sum(profit)
+from international_breweries
+Group by 1
+order by 2
+
+
+/*--2. Compare the total profit between these two territories in order for the territory manager,
+Mr. Stone made a strategic decision that will aid profit maximization in 2020.*/
+
+select   
+Case when countries in ('Nigeria', 'Ghana') then 'Anglophone'
+when countries in ('Benin', 'Senegal','Togo') then 'Francophone'
+End As Two_Awesome_Territories,
+sum(profit)
+from international_breweries
+Group by 1
+Order by 2
+
+--Francophone will be the best option for business because of the high yield in profit
+
+--3. Country that generated the highest profit in 2019
+
+select countries, years, sum(profit)
+from international_breweries
+where years=2019
+group by 1,2
+order by 3 Desc
+limit 1
+
+--4. Help him find the year with the highest profit.
+select years, sum(profit)
+from international_breweries
+Group by 1
+order by 2 Desc
+limit 1
+
+--5. Which month in the three years was the least profit generated?
+select months, min(profit)
+from international_breweries
+Group by 1
+order by 2
+limit 1
+/*Or_it_could_interpreted_as which produces a different result because the sums for a distinct
+was added from the first year to the last year */
+
+select months, sum(profit)
+from international_breweries
+Group by 1
+order by 2
+limit 1
+
+--6. What was the minimum profit in the month of December 2018?
+
+select months, years, min(profit)
+from international_breweries
+where months='December' And years=2018
+Group by 1,2
+order by 3
+
+--7. Compare the profit in percentage for each of the month in 2019
+select sum(profit), years
+from international_breweries
+where years=2019
+group by 2
+order by 1
+--from above we have our total profit
+select months, years, sum(profit), (sum(profit) * 100/30020250) as percentage_profit
+from international_breweries
+where years=2019
+Group by 1,2
+Order by 4
+
+--8. Which particular brand generated the highest profit in Senegal?
+select countries, brands, sum(profit)
+from international_breweries
+where countries='Senegal'
+Group by 1,2
+Order by 3 Desc
+Limit 1
+
+						--SECTION B
+--BRAND ANALYSIS
+
+/*1. Within the last two years, the brand manager wants to know the top three brands
+consumed in the francophone countries*/
+
+Select brands,
+case when years in(2018,2019) then 'Last_two_yrs' end as last_two_years, 
+case when countries not in ('Nigeria', 'Ghana') then 'francophone' end as francophone_countries,
+sum(quantity)
+from international_breweries
+where countries not in ('Nigeria', 'Ghana') And years in (2018,2019)
+Group by 1,2,3
+Order by 4 Desc
+limit 3
+
+--2. Find out the top two choice of consumer brands in Ghana
+
+Select brands, countries, sum(quantity)
+from international_breweries
+where countries='Ghana'
+Group by 1,2
+Order by 3 Desc
+limit 2
+
+/*3. Find out the details of beers consumed in the past three years in the most oil reached
+country in West Africa.*/
+
+select countries, years, Sum(quantity)
+from international_breweries
+where countries='Nigeria'
+Group by 1,2
+Order by 3
+
+--4. Favorites malt brand in Anglophone region between 2018 and 2019
+
+select 
+Case when countries in ('Nigeria' , 'Ghana') then 'Anglophone'
+ENd as Anglophone_region,
+brands,
+Case when years in (2018, 2019) then '2018-2019' end as Two_years, sum(quantity)
+from international_breweries
+where countries in ('Nigeria' , 'Ghana') and years in(2018,2019)
+Group by 1,2,3
+order by 4 Desc
+Limit 1
+
+--5. Which brands sold the highest in 2019 in Nigeria?
+
+select brands, countries,years, Sum(quantity)
+from international_breweries
+where years=2019 and countries='Nigeria'
+group by 1,2,3
+Order by 4 Desc
+limit 1
+
+--6. Favorites brand in South_South region in Nigeria
+
+select brands, countries, region, Sum(quantity)
+from international_breweries
+where countries='Nigeria' and region='southsouth'
+group by 1,2,3
+Order by 4 Desc
+Limit 1
+eagle_lager
+
+--7. Bear consumption in Nigeria
+
+select countries, Sum(quantity)
+from international_breweries
+where countries='Nigeria'
+Group by 1
+Order by 2
+
+--8. Level of consumption of Budweiser in the regions in Nigeria
+
+select brands,region,countries, sum(quantity)
+from international_breweries
+where countries='Nigeria' and brands='budweiser'
+Group by 1,2,3
+order by 4
+
+--9. Level of consumption of Budweiser in the regions in Nigeria in 2019 (Decision on Promo)
+
+select brands, region, countries, years, sum(quantity)
+from international_breweries
+where countries='Nigeria' and brands='budweiser' and years=2019
+Group by 1,2,3,4
+order by 5
+
+						--Section C
+					--COUNTRIES ANALYSIS
+--1. Country with the highest consumption of beer.
+select countries, sum(quantity)
+from international_breweries
+group by 1
+order by 2 Desc
+Limit 1
+
+--2. Highest sales personnel of Budweiser in Senegal
+Select brands, Sales_rep, countries,sum(quantity)
+from international_breweries
+where countries='Senegal' and brands='budweiser'
+Group by 1,2, 3
+order by 4 Desc
+Limit 1
+
+--3. Country with the highest profit of the fourth quarter in 2019
+Select
+Case when months in ('September', 'October', 'November', 'December') then 'fourth_quarter'
+End as Quarters,
+years, countries, sum(profit)
+from international_breweries
+where years=2019 and months in ('September', 'October', 'November', 'December')
+group by Quarters, 2,3
+order by 4 Desc
+Limit 1
+
+--Country with the highest quarter is Ghana
+
